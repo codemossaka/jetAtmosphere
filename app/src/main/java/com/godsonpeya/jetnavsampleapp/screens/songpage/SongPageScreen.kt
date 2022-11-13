@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
@@ -39,18 +41,29 @@ fun SongPageScreen(navController: NavHostController, songId: Int?, viewModel: So
         val song = result.data
         Column(modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Surface(modifier = Modifier.padding(10.dp)) {
-                Text(text = song!!.name)
-
+            Surface(modifier = Modifier.padding(vertical = 13.dp)) {
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontSize = 19.sp)) {
+                        append(song!!.name + "\n")
+                    }
+                    withStyle(style = SpanStyle(fontSize = 13.sp)) {
+                        append(song!!.songBook.name)
+                    }
+                }, textAlign = TextAlign.Center)
             }
             Divider()
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, content = {
                 items(song!!.verses) { verse ->
                     Text(text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = 19.sp)) {
+                        withStyle(style = SpanStyle(fontSize = 19.sp,
+                            fontStyle = if (verse.isRefrain) FontStyle.Italic else FontStyle.Normal,
+                            fontWeight = if (verse.isRefrain) FontWeight.Bold else FontWeight.Normal,
+                            )) {
                             append(verse.line.replace("\\n", "\r\n"))
                         }
-                    }, textAlign = TextAlign.Center, modifier = Modifier.padding(5.dp))
+                    },
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 89.dp))
                 }
             })
         }

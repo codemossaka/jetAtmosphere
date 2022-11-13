@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,9 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.godsonpeya.jetnavsampleapp.model.SongBooks
@@ -40,11 +44,20 @@ fun MainScreen(viewModel: MainViewModel, navController: NavHostController) {
         Surface(modifier = Modifier.fillMaxSize()) {
             LazyColumn(content = {
                 items(songbooks.data!!) { songbook ->
-                    Surface(modifier = Modifier
-                        .fillMaxWidth()
-                        .border(width = 1.dp, color = Color.Gray)
-                        .clickable { navController.navigate(AppScreens.SongListScreen.name + "/${songbook.id}") }) {
-                        Text(text = songbook.name, modifier = Modifier.padding(10.dp))
+                    Column {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate(AppScreens.SongListScreen.name + "/${songbook.id}") }) {
+                            Text(text = buildAnnotatedString {
+                                withStyle(style = SpanStyle()) {
+                                    append(songbook.id.toString()+". ")
+                                }
+                                withStyle(style = SpanStyle()) {
+                                    append(songbook.name)
+                                }
+                            }, modifier = Modifier.padding(20.dp))
+                        }
+                        Divider()
                     }
                 }
             })
