@@ -91,7 +91,9 @@ fun MainScreen(viewModel: MainViewModel, navController: NavHostController) {
     }) { innerPadding ->
 
         if (status.value!=ApiStatus.IDLE) {
-            LoaderView(status = status, openDialog = setOpenDialog(status))
+            LoaderView(status = status, openDialog = setOpenDialog(status)){
+                viewModel.cancelSync()
+            }
         }
         if (result.isEmpty()) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {

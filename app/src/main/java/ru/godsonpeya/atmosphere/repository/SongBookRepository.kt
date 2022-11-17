@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
@@ -80,7 +81,7 @@ class SongBookRepository @Inject constructor(
         }
     }
 
-    suspend fun updateDownloadedSongBook() {
+    suspend fun updateDownloadedSongBook():Job =
         scope.launch {
             try {
                 SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
@@ -96,11 +97,9 @@ class SongBookRepository @Inject constructor(
             } catch (e: Exception) {
                 SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
             }
-
-        }
     }
 
-    fun refreshSongs() {
+    fun refreshSongs() =
         scope.launch {
             try {
                 SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
@@ -123,10 +122,9 @@ class SongBookRepository @Inject constructor(
                 SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
             }
         }
-    }
 
-    suspend fun downloadSongsBySongBookId(songBook: SongBook) {
-        scope.launch {
+
+    suspend fun downloadSongsBySongBookId(songBook: SongBook) :Job= scope.launch {
             try {
                 SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
                 downloadSongs(songBook)
@@ -135,7 +133,7 @@ class SongBookRepository @Inject constructor(
                 SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
             }
         }
-    }
+
 
     private suspend fun downloadSongs(songBookDto: SongBook) {
         val songs = apiService.getSongs(songBookDto.id!!)

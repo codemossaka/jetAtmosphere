@@ -164,6 +164,7 @@ fun LoaderView(
     status: MutableState<ApiStatus>,
     openDialog: MutableState<Boolean> = mutableStateOf(false),
     songBook: State<SongBook> = mutableStateOf(SongBook(name = "Updating database")),
+    cancel: ()->Unit={},
 ) {
     if (openDialog.value) {
         AlertDialog(onDismissRequest = {
@@ -197,11 +198,14 @@ fun LoaderView(
                 Column(modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     Divider()
-                    Text(text = "Cancel", modifier = Modifier
+                    Text(text = if (status.value == ApiStatus.LOADING) "Cancel" else "Close", modifier = Modifier
                         .padding(14.dp)
                         .clickable {
                             if (status.value != ApiStatus.LOADING) {
                                 closeAlertDialog(openDialog)
+                            }else{
+                                cancel.invoke()
+//                                closeAlertDialog(openDialog)
                             }
                         }, color = MaterialTheme.colors.primary)
                 }

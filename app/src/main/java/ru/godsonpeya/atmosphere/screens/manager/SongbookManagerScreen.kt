@@ -47,7 +47,9 @@ fun SongbookManagerScreen(navController: NavHostController, viewModel: SongbookM
         if (status.value != ApiStatus.IDLE) {
             LoaderView(status = status,
                 openDialog = setOpenDialog(status),
-                songBook = downloadingSongBook)
+                songBook = downloadingSongBook){
+                viewModel.cancelDownLoadSongBook()
+            }
         }
         val languageWithSongBooks: MutableList<LanguageWithSongBook> = result.value
         if (languageWithSongBooks.isEmpty()) {

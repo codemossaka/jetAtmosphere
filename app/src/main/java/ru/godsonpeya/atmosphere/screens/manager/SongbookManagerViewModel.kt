@@ -10,6 +10,7 @@ import ru.godsonpeya.atmosphere.repository.SongBookRepository
 import ru.godsonpeya.atmosphere.utils.SongBookEventBroadcast.watchSongBookStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,6 +21,8 @@ class SongbookManagerViewModel @Inject constructor(private val songBookRepositor
 
     private val _status = mutableStateOf(ApiStatus.IDLE)
     val status = _status
+
+    private val _job = mutableStateOf<Job>(Job())
 
     private val _expandedLanguageList = MutableStateFlow(listOf<Int>())
     val expandedLanguageList: StateFlow<List<Int>> get() = _expandedLanguageList
@@ -63,7 +66,13 @@ class SongbookManagerViewModel @Inject constructor(private val songBookRepositor
     fun downLoadSongBook(songBook: SongBook) {
         _downloadingSongBook.value=songBook
         viewModelScope.launch {
-            songBookRepository.downloadSongsBySongBookId(songBook)
+            _job.value= songBookRepository.downloadSongsBySongBookId(songBook)
+        }
+    }
+
+    fun cancelDownLoadSongBook() {
+        viewModelScope.launch {
+            _job.value.cancel()
         }
     }
 

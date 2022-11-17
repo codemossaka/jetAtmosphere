@@ -1,0 +1,10 @@
+package ru.godsonpeya.atmosphere.utils
+
+object Constants {
+    const val BASE_URL = ""
+
+    const val ExpandAnimation = 300
+    const val CollapseAnimation = 300
+    const val FadeInAnimation = 300
+    const val FadeOutAnimation = 300
+}
