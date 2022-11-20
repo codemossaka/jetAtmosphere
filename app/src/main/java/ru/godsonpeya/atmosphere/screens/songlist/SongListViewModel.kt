@@ -1,30 +1,45 @@
 package ru.godsonpeya.atmosphere.screens.songlist
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import ru.godsonpeya.atmosphere.data.local.entity.SongWithVerses
-import ru.godsonpeya.atmosphere.repository.SongRepository
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import ru.godsonpeya.atmosphere.data.dto.TabView
+import ru.godsonpeya.atmosphere.data.local.entity.SongWithVerses
+import ru.godsonpeya.atmosphere.repository.SongRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class SongListViewModel @Inject constructor(private val songRepository: SongRepository) :
     ViewModel() {
-    private val _songs = MutableStateFlow<MutableList<SongWithVerses>>(mutableListOf())
-    val songs = _songs.asStateFlow()
+    private var _songs = mutableStateOf<List<SongWithVerses>>(mutableListOf())
+    val songs = _songs
 
-//    private fun getSongsBySongBookId() {
-//        viewModelScope.launch {
-//            songRepository.getSongsBySongBookId(songBookId).distinctUntilChanged()
-//                .collectLatest { songList ->
-//                    _songs.value = songList
-//                }
-//        }
-//    }
+    val searchState: MutableState<Boolean> = mutableStateOf(true)
 
-    suspend fun getSongs(songBookId: Int): Flow<MutableList<SongWithVerses>> {
-        return songRepository.getSongsBySongBookId(songBookId)
+    fun getSongs(songBookId: Int) {
+        viewModelScope.launch {
+            songRepository.getSongsBySongBookId(songBookId).collectLatest {
+                _songs.value = it
+            }
+        }
     }
+
+    fun setFavorite(songId: Int, isFavorite: Boolean) {
+        viewModelScope.launch {
+            songRepository.setFavorite(songId, isFavorite)
+        }
+    }
+
+    fun searchSongs(search: String) = viewModelScope.launch {
+        songRepository.searchSongs(search).collectLatest {
+            if (it.isNotEmpty())
+                _songs.value = it
+        }
+    }
+
 }

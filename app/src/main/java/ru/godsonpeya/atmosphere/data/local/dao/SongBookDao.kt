@@ -1,9 +1,9 @@
 package ru.godsonpeya.atmosphere.data.local.dao
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import ru.godsonpeya.atmosphere.data.local.entity.SongBook
 import ru.godsonpeya.atmosphere.data.local.entity.SongBookWithLanguage
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SongBookDao {

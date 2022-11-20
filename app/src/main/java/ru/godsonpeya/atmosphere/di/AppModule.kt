@@ -2,13 +2,6 @@ package ru.godsonpeya.atmosphere.di
 
 import android.content.Context
 import androidx.room.Room
-import ru.godsonpeya.atmosphere.data.local.AppDatabase
-import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
-import ru.godsonpeya.atmosphere.data.local.dao.SongBookDao
-import ru.godsonpeya.atmosphere.data.local.dao.SongDao
-import ru.godsonpeya.atmosphere.data.local.dao.VerseDao
-import ru.godsonpeya.atmosphere.data.remote.network.ApiService
-import ru.godsonpeya.atmosphere.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +10,19 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.godsonpeya.atmosphere.BuildConfig
+import ru.godsonpeya.atmosphere.data.local.AppDatabase
+import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
+import ru.godsonpeya.atmosphere.data.local.dao.SongBookDao
+import ru.godsonpeya.atmosphere.data.local.dao.SongDao
+import ru.godsonpeya.atmosphere.data.local.dao.VerseDao
+import ru.godsonpeya.atmosphere.data.remote.network.ApiService
+import ru.godsonpeya.atmosphere.utils.Constants
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -51,8 +55,8 @@ class AppModule {
     @Singleton
     fun provideApiService(): ApiService {
         return Retrofit.Builder().baseUrl(Constants.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create()).build()
-            .create(ApiService::class.java)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(provideBasicOkHttpClient().build()).build().create(ApiService::class.java)
     }
 
     @Singleton
@@ -62,3 +66,13 @@ class AppModule {
             .fallbackToDestructiveMigration().build()
 
 }
+
+private fun provideBasicOkHttpClient() =
+    OkHttpClient.Builder().readTimeout(40, TimeUnit.SECONDS).connectTimeout(20, TimeUnit.SECONDS)
+        .writeTimeout(240, TimeUnit.SECONDS).apply {
+            if (BuildConfig.DEBUG) {
+                addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
+        }

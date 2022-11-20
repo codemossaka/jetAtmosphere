@@ -25,24 +25,24 @@ fun AppNavigation(navController: NavHostController) {
             val viewModel = hiltViewModel<MainViewModel>()
             MainScreen(navController = navController, viewModel = viewModel)
         }
-        composable(route = NavigationItem.SongListScreen.getFullRoute(),
-            arguments = listOf(navArgument(NavigationItem.SongListScreen.getParam()) {
+        composable(route = NavigationItem.SongListScreen.getFullRoute() + "/{songBookId}",
+            arguments = listOf(navArgument("songBookId") {
                 type = NavType.IntType
             })) { entry ->
             val viewModel = hiltViewModel<SongListViewModel>()
             SongListScreen(
                 navController = navController,
-                songBookId = entry.arguments?.getInt(NavigationItem.SongListScreen.getParam()),
+                songBookId = entry.arguments?.getInt("songBookId"),
                 viewModel = viewModel,
             )
         }
-        composable(route = NavigationItem.SongPageScreen.getFullRoute(),
-            arguments = listOf(navArgument(NavigationItem.SongPageScreen.getParam()) {
+        composable(route = NavigationItem.SongPageScreen.getFullRoute() + "/{songId}",
+            arguments = listOf(navArgument("songId") {
                 type = NavType.IntType
             })) { entry ->
             val viewModel = hiltViewModel<SongPageViewModel>()
             SongPageScreen(navController = navController,
-                songId = entry.arguments?.getInt(NavigationItem.SongPageScreen.getParam()),
+                songId = entry.arguments?.getInt("songId"),
                 viewModel = viewModel)
         }
         composable(NavigationItem.ManagerScreen.getFullRoute()) {

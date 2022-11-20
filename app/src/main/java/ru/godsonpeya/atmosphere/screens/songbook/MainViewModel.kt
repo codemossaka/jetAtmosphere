@@ -3,20 +3,17 @@ package ru.godsonpeya.atmosphere.screens.songbook
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
-import ru.godsonpeya.atmosphere.data.local.entity.SongBookWithLanguage
-import ru.godsonpeya.atmosphere.repository.SongBookRepository
-import ru.godsonpeya.atmosphere.utils.SongBookEventBroadcast
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import ru.godsonpeya.atmosphere.data.local.entity.SongBook
+import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
+import ru.godsonpeya.atmosphere.data.local.entity.SongBookWithLanguage
+import ru.godsonpeya.atmosphere.repository.SongBookRepository
+import ru.godsonpeya.atmosphere.utils.SongBookEventBroadcast
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,12 +49,6 @@ class MainViewModel @Inject constructor(private val songBookRepository: SongBook
         }
     }
 
-    fun syncData() {
-        viewModelScope.launch {
-            _job.value  = songBookRepository.updateDownloadedSongBook()
-        }
-    }
-
     fun cancelSync() {
         viewModelScope.launch {
             _job.value.cancel()
@@ -67,6 +58,12 @@ class MainViewModel @Inject constructor(private val songBookRepository: SongBook
     fun deleteSongBook(songBookId: Int) {
         viewModelScope.launch{
             songBookRepository.deleteSongBook(songBookId)
+        }
+    }
+
+    fun updateSongBook(songBookId: Int) {
+        viewModelScope.launch {
+            _job.value  = songBookRepository.updateDownloadedSongBook(songBookId)
         }
     }
 }

@@ -1,11 +1,11 @@
 package ru.godsonpeya.atmosphere.repository
 
-import android.util.Log
-import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
 import ru.godsonpeya.atmosphere.data.local.dao.SongBookDao
@@ -41,9 +41,9 @@ class SongBookRepository @Inject constructor(
 
     suspend fun deleteSongBook(songBookId: Int) {
         scope.launch {
-            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
+//            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
             deleteSongBookById(songBookId)
-            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
+//            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
         }
     }
 
@@ -81,58 +81,51 @@ class SongBookRepository @Inject constructor(
         }
     }
 
-    suspend fun updateDownloadedSongBook():Job =
-        scope.launch {
-            try {
-                SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
-                val songBooks = songBookDao.getAllBookWithoutFlow()
-                songBooks.forEach { songBookWithLang ->
-                    val songBook =
-                        apiService.getSongBook(songBookWithLang.songbook.id!!).execute()
-                            .body()
-                    downloadSongs(songBook!!.asSongbookDatabaseModel2())
-                }
+    suspend fun updateDownloadedSongBook(songBookId: Int): Job = scope.launch {
+        try {
+            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
+            val songBook = apiService.getSongBook(songBookId).execute().body()
+            downloadSongs(songBook!!.asSongbookDatabaseModel2())
 
-                SongBookEventBroadcast.setStatus(ApiStatus.DONE)
-            } catch (e: Exception) {
-                SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
-            }
+            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
+        } catch (e: Exception) {
+            SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
+        }
     }
 
-    fun refreshSongs() =
-        scope.launch {
-            try {
-                SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
-                val language = apiService.getSongBooksByLanguages()
-                if (language.isNotEmpty()) {
-                    val songbooks = language.asSongbookDatabaseModel2()
-                    songbooks.forEach {
-                        it.id?.let { id ->
-                            val byId = songBookDao.getById(id)
-                            if (byId?.isDownLoaded == true) {
-                                it.isDownLoaded = true
-                            }
+    fun refreshSongs() = scope.launch {
+        try {
+            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
+            val language = apiService.getSongBooksByLanguages()
+            if (language.isNotEmpty()) {
+                val songbooks = language.asSongbookDatabaseModel2()
+                songbooks.forEach {
+                    it.id?.let { id ->
+                        val byId = songBookDao.getById(id)
+                        if (byId?.isDownLoaded == true) {
+                            it.isDownLoaded = true
                         }
                     }
-                    languageDao.insertWithSuspend(language.asLanguageDatabaseModel2())
-                    songBookDao.insertWithSuspend(songbooks)
                 }
-                SongBookEventBroadcast.setStatus(ApiStatus.DONE)
-            } catch (e: Exception) {
-                SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
+                languageDao.insertWithSuspend(language.asLanguageDatabaseModel2())
+                songBookDao.insertWithSuspend(songbooks)
             }
+            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
+        } catch (e: Exception) {
+            SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
         }
+    }
 
 
-    suspend fun downloadSongsBySongBookId(songBook: SongBook) :Job= scope.launch {
-            try {
-                SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
-                downloadSongs(songBook)
-                SongBookEventBroadcast.setStatus(ApiStatus.DONE)
-            } catch (e: Exception) {
-                SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
-            }
+    suspend fun downloadSongsBySongBookId(songBook: SongBook): Job = scope.launch {
+        try {
+            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
+            downloadSongs(songBook)
+            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
+        } catch (e: Exception) {
+            SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
         }
+    }
 
 
     private suspend fun downloadSongs(songBookDto: SongBook) {

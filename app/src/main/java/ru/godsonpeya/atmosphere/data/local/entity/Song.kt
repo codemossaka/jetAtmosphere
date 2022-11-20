@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "song")
 data class Song(
-    @PrimaryKey
-    var id: Int? = null,
+    @PrimaryKey var id: Int? = null,
     var number: String? = null,
     var code: String? = null,
     var chordUrl: String? = null,
@@ -19,4 +18,5 @@ data class Song(
     var authorId: Int? = null,
     var chord: Boolean? = null,
     var audio: Boolean? = null,
+    var isFavorite: Boolean? = null,
 )

@@ -3,16 +3,16 @@ package ru.godsonpeya.atmosphere.screens.manager
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
-import ru.godsonpeya.atmosphere.data.local.entity.LanguageWithSongBook
-import ru.godsonpeya.atmosphere.data.local.entity.SongBook
-import ru.godsonpeya.atmosphere.repository.SongBookRepository
-import ru.godsonpeya.atmosphere.utils.SongBookEventBroadcast.watchSongBookStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
+import ru.godsonpeya.atmosphere.data.local.entity.LanguageWithSongBook
+import ru.godsonpeya.atmosphere.data.local.entity.SongBook
+import ru.godsonpeya.atmosphere.repository.SongBookRepository
+import ru.godsonpeya.atmosphere.utils.SongBookEventBroadcast.watchSongBookStatus
 import javax.inject.Inject
 
 @HiltViewModel

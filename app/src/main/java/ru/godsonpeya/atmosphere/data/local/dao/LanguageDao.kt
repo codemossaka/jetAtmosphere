@@ -2,10 +2,10 @@ package ru.godsonpeya.atmosphere.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import ru.godsonpeya.atmosphere.data.local.entity.Language
 import ru.godsonpeya.atmosphere.data.local.entity.LanguageWithDownloadedSongBook
 import ru.godsonpeya.atmosphere.data.local.entity.LanguageWithSongBook
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LanguageDao {
@@ -26,6 +26,6 @@ interface LanguageDao {
     fun getById(id: Long): LiveData<LanguageWithSongBook>
 
     @Transaction
-    @Query("SELECT distinct l.id,l.code , l.name FROM language l inner join song s on l.id = s.languageId where s.code = :songCode order by l.id")
-    fun getLangsByCode(songCode: String): Flow<MutableList<Language>>
+    @Query("SELECT distinct l.id,l.code , l.name FROM language l inner join song s on l.id = s.languageId where s.code = :songCode AND l.id IS NOT :languageId order by l.id")
+    fun getLangsByCode(songCode: String, languageId: Int): Flow<MutableList<Language>>
 }

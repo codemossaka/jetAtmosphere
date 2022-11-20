@@ -7,14 +7,14 @@ import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
 import ru.godsonpeya.atmosphere.data.local.dao.SongBookDao
 import ru.godsonpeya.atmosphere.data.local.dao.SongDao
 import ru.godsonpeya.atmosphere.data.local.dao.VerseDao
+import ru.godsonpeya.atmosphere.data.local.entity.*
 import ru.godsonpeya.atmosphere.utils.DateConverter
 import ru.godsonpeya.atmosphere.utils.UUIDConverter
-import ru.godsonpeya.atmosphere.data.local.entity.*
 
 @Database(
     entities = [Language::class, SongBook::class, Song::class, Verse::class],
     views = [DownloadedSongBook::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(DateConverter::class, UUIDConverter::class)

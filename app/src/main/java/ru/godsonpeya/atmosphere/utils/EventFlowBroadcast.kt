@@ -1,8 +1,8 @@
 package ru.godsonpeya.atmosphere.utils
 
-import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
 
 object SongBookEventBroadcast {
     private val status = MutableStateFlow(ApiStatus.IDLE)

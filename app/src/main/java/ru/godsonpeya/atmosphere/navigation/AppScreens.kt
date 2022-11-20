@@ -4,11 +4,12 @@ import ru.godsonpeya.atmosphere.R
 
 sealed class NavigationItem(var router: Route<Any>, var icon: Int, var title: String) {
     object MainScreen : NavigationItem(Route("home"), R.drawable.ic_download, "Home")
-    object SongListScreen :
-        NavigationItem(Route("SongListScreen", "songBookId"), R.drawable.ic_download, "SongList")
+    object SongListScreen : NavigationItem(Route("SongListScreen", listOf("songBookId")),
+        R.drawable.ic_download,
+        "SongList")
 
     object SongPageScreen :
-        NavigationItem(Route("SongPageScreen", "songId"), R.drawable.ic_download, "Song")
+        NavigationItem(Route("SongPageScreen", listOf("songId")), R.drawable.ic_download, "Song")
 
     object ManagerScreen : NavigationItem(Route("ManagerScreen"), R.drawable.ic_download, "Manager")
 
@@ -17,7 +18,8 @@ sealed class NavigationItem(var router: Route<Any>, var icon: Int, var title: St
     }
 
     fun getParam(): String {
-        return this.router.param.toString()
+        return this.router.params.joinToString("/",
+            transform = { t -> "{$t}" })
     }
 
     fun <T> setParam(pathParam: T): String {
@@ -25,8 +27,8 @@ sealed class NavigationItem(var router: Route<Any>, var icon: Int, var title: St
     }
 }
 
-class Route<T>(val route: String, val param: T? = null ) {
+class Route<T>(val route: String, val params: List<T> = emptyList()) {
     fun getFullRoute(): String {
-        return "$route/{$param}"
+        return route ///${params.joinToString("/", transform = { t -> "{$t}" })}"
     }
 }

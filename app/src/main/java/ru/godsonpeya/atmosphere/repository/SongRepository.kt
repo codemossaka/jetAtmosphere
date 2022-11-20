@@ -1,10 +1,10 @@
 package ru.godsonpeya.atmosphere.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.godsonpeya.atmosphere.data.local.dao.LanguageDao
 import ru.godsonpeya.atmosphere.data.local.dao.SongDao
 import ru.godsonpeya.atmosphere.data.local.entity.Language
 import ru.godsonpeya.atmosphere.data.local.entity.SongWithVerses
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SongRepository @Inject constructor(
@@ -13,11 +13,29 @@ class SongRepository @Inject constructor(
 ) {
     fun getSongsBySongBookId(songBookId: Int): Flow<MutableList<SongWithVerses>> {
         try {
-//            SongBookEventBroadcast.setStatus(ApiStatus.LOADING)
-//            SongBookEventBroadcast.setStatus(ApiStatus.DONE)
-            return songDao.getAllSongById(songBookId)
+            val allSongById = songDao.getAllSongById(songBookId)
+            return allSongById
         } catch (e: Exception) {
-//            SongBookEventBroadcast.setStatus(ApiStatus.ERROR)
+            e.printStackTrace()
+        }
+        throw RuntimeException()
+    }
+
+    fun searchSongs(songBookId: String): Flow<MutableList<SongWithVerses>> {
+        try {
+            val allSongById = songDao.searchSong(songBookId)
+            return allSongById
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        throw RuntimeException()
+    }
+
+    fun getAllSongs(): Flow<MutableList<SongWithVerses>> {
+        try {
+            val allSongById = songDao.getAllSong()
+            return allSongById
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         throw RuntimeException()
@@ -27,11 +45,15 @@ class SongRepository @Inject constructor(
         return songDao.getById(songId)
     }
 
-    fun getLanguages(code: String): Flow<MutableList<Language>> {
-        return languageDao.getLangsByCode(code)
+    fun setFavorite(songId: Int,isFavorite:Boolean) {
+        return songDao.setFavorite(songId, isFavorite)
     }
 
-//    suspend fun getSongAnalogFromDB(langId: Int, songCode: String): Flow<SongWithVerses> {
-//        return songDao.getAnalog(langId, songCode)
-//    }
+    fun getLanguages(song: SongWithVerses): Flow<MutableList<Language>> {
+        return languageDao.getLangsByCode(song.song.code!!, song.song.languageId!!)
+    }
+
+    suspend fun getSongAnalogFromDB(langId: Int, songCode: String): SongWithVerses {
+        return songDao.getAnalog(langId, songCode)
+    }
 }
