@@ -1,4 +1,4 @@
-package ru.godsonpeya.atmosphere.screens.songlist
+package ru.godsonpeya.atmosphere.screens.favorite
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,18 +11,18 @@ import ru.godsonpeya.atmosphere.repository.SongRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class SongListViewModel @Inject constructor(private val songRepository: SongRepository) :
+class FavoriteViewModel @Inject constructor(private val songRepository: SongRepository) :
     ViewModel() {
+
+
     private var _songs = mutableStateOf<List<SongWithVerses>>(mutableListOf())
     val songs = _songs
 
-    fun getSongs(songBookId: Int) {
-        viewModelScope.launch {
-            songRepository.getSongsBySongBookId(songBookId).collectLatest {
-                _songs.value = it
-            }
-        }
+    init {
+        getSongs()
     }
+
+
 
     fun setFavorite(songId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
@@ -30,11 +30,11 @@ class SongListViewModel @Inject constructor(private val songRepository: SongRepo
         }
     }
 
-    fun searchSongs(search: String) = viewModelScope.launch {
-        songRepository.searchSongs(search).collectLatest {
-            if (it.isNotEmpty())
+    private fun getSongs() {
+        viewModelScope.launch {
+            songRepository.getAllFavorites().collectLatest {
                 _songs.value = it
+            }
         }
     }
-
 }

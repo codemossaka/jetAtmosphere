@@ -13,6 +13,8 @@ sealed class NavigationItem(var router: Route<Any>, var icon: Int, var title: St
 
     object ManagerScreen : NavigationItem(Route("ManagerScreen"), R.drawable.ic_download, "Manager")
 
+    object FavoriteScreen : NavigationItem(Route("FavoriteScreen"), R.drawable.ic_download, "Favorite")
+
     fun getFullRoute(): String {
         return this.router.getFullRoute()
     }

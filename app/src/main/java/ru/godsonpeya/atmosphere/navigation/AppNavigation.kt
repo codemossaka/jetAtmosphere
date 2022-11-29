@@ -7,10 +7,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.godsonpeya.atmosphere.screens.favorite.FavoriteScreen
+import ru.godsonpeya.atmosphere.screens.favorite.FavoriteViewModel
 import ru.godsonpeya.atmosphere.screens.manager.SongbookManagerScreen
 import ru.godsonpeya.atmosphere.screens.manager.SongbookManagerViewModel
-import ru.godsonpeya.atmosphere.screens.songbook.MainScreen
-import ru.godsonpeya.atmosphere.screens.songbook.MainViewModel
+import ru.godsonpeya.atmosphere.screens.home.MainScreen
+import ru.godsonpeya.atmosphere.screens.home.MainViewModel
 import ru.godsonpeya.atmosphere.screens.songlist.SongListScreen
 import ru.godsonpeya.atmosphere.screens.songlist.SongListViewModel
 import ru.godsonpeya.atmosphere.screens.songpage.SongPageScreen
@@ -48,6 +50,11 @@ fun AppNavigation(navController: NavHostController) {
         composable(NavigationItem.ManagerScreen.getFullRoute()) {
             val viewModel = hiltViewModel<SongbookManagerViewModel>()
             SongbookManagerScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable(NavigationItem.FavoriteScreen.getFullRoute()) {
+            val viewModel = hiltViewModel<FavoriteViewModel>()
+            FavoriteScreen(navController = navController, viewModel = viewModel)
         }
     }
 }

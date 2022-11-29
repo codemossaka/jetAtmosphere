@@ -23,3 +23,8 @@ fun checkForInternet(context: Context): Boolean {
         @Suppress("DEPRECATION") return networkInfo.isConnected
     }
 }
+
+
+fun formatFavorite(favorite: Boolean?): Boolean {
+    return !(favorite ?: false)
+}

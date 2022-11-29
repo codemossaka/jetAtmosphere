@@ -13,6 +13,7 @@ data class Song(
     var description: String? = null,
     var mainChord: String? = null,
     var audioUrl: String? = null,
+    var imageUrl: String? = null,
     var songbookId: Int? = null,
     var languageId: Int? = null,
     var authorId: Int? = null,

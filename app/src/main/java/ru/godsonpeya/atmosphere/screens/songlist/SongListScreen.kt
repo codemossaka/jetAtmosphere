@@ -19,9 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.godsonpeya.atmosphere.component.RowSongItem
-import ru.godsonpeya.atmosphere.data.dto.TabView
 import ru.godsonpeya.atmosphere.navigation.NavigationItem
-import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp
+import ru.godsonpeya.atmosphere.utils.formatFavorite
 import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp.setScaffold
 import ru.godsonpeya.atmosphere.widgets.TopBar
 
@@ -105,7 +104,7 @@ fun SongListScreen(navController: NavController, songBookId: Int?, viewModel: So
             LazyColumn(content = {
                 items(songs) { data ->
                     RowSongItem(data, onFavoriteClicked = {
-                        viewModel.setFavorite(data.song.id!!, !data.song.isFavorite!!)
+                        viewModel.setFavorite(data.song.id!!, formatFavorite(data.song.isFavorite))
                     }) {
                         navController.navigate(NavigationItem.SongPageScreen.setParam(data.song.id!!))
                     }
@@ -114,3 +113,4 @@ fun SongListScreen(navController: NavController, songBookId: Int?, viewModel: So
         }
     }
 }
+

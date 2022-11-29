@@ -25,7 +25,7 @@ fun ExpandableLanguageRow(
     songBookItem: LanguageWithSongBook,
     onCardArrowClick: () -> Unit,
     expanded: Boolean,
-    expandableSongBookRow: @Composable ()-> Unit
+    expandableSongBookRow: @Composable () -> Unit,
 ) {
     val transitionState = remember {
         MutableTransitionState(expanded).apply {
@@ -55,7 +55,7 @@ fun ExpandableLanguageRow(
                             textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp))
+                                .padding(20.dp))
                     }
                     Column(modifier = Modifier.weight(0.15f)) {
                         CardArrow(degrees = arrowRotationDegree, onClick = onCardArrowClick)
@@ -85,7 +85,7 @@ fun CardArrow(
 fun ExpandableSongBookRow(
     expanded: Boolean = true,
     songBooks: List<SongBook>,
-    onSongBookClicked: (songBook: SongBook)-> Unit,
+    onSongBookClicked: (songBook: SongBook) -> Unit,
 ) {
     val enterFadeIn = remember {
         fadeIn(animationSpec = TweenSpec(durationMillis = Constants.FadeInAnimation,
@@ -109,7 +109,7 @@ fun ExpandableSongBookRow(
             songBooks.forEach { songBook ->
                 Divider()
                 Row(horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 26.dp, vertical = 5.dp)) {
                     Text(
                         text = songBook.name!!,
                         modifier = Modifier
@@ -118,14 +118,13 @@ fun ExpandableSongBookRow(
                             .weight(6f),
 
                         )
-                    Icon(painter = painterResource(id = if (songBook.isDownLoaded) R.drawable.ic_download_done else R.drawable.ic_download),
-                        contentDescription = "ddd",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .weight(1f)
-                            .clickable {
-                                onSongBookClicked.invoke(songBook)
-                            })
+                    IconButton(onClick = { onSongBookClicked.invoke(songBook) }) {
+                        Icon(painter = painterResource(id = if (songBook.isDownLoaded) R.drawable.ic_download_done else R.drawable.ic_download),
+                            contentDescription = "ddd",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .weight(1f))
+                    }
                 }
             }
         }

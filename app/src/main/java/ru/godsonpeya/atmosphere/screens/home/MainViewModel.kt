@@ -1,4 +1,4 @@
-package ru.godsonpeya.atmosphere.screens.songbook
+package ru.godsonpeya.atmosphere.screens.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

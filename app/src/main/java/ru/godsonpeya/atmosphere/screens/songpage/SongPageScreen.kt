@@ -1,5 +1,6 @@
 package ru.godsonpeya.atmosphere.screens.songpage
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -21,7 +23,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp
+import ru.godsonpeya.atmosphere.component.PlayerView
 import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp.setScaffold
 import ru.godsonpeya.atmosphere.widgets.TopBar
 
@@ -35,8 +37,10 @@ fun SongPageScreen(navController: NavHostController, songId: Int?, viewModel: So
 
     val result = viewModel.song.value
     if (result.song.code != null) {
+//        viewModel.playOrToggleSong( currentAudio = result)
         viewModel.getLanguages(result)
     }
+
     setScaffold(
         topBar = {
             TopBar(title = "", actions = {
@@ -71,31 +75,46 @@ fun SongPageScreen(navController: NavHostController, songId: Int?, viewModel: So
         },
     )
 
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Surface(modifier = Modifier.padding(vertical = 13.dp)) {
-            Text(text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontSize = 19.sp)) {
-                    append(result.song.name + "\n")
-                }
-                withStyle(style = SpanStyle(fontSize = 13.sp)) {
-                    result.songBook.name?.let { append(it) }
-                }
-            }, textAlign = TextAlign.Center)
-        }
-        Divider()
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, content = {
-            items(result.verses) { verse ->
+    Column(modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween) {
+        Column(modifier = Modifier
+            .weight(.8f),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Surface(modifier = Modifier.padding(vertical = 13.dp)) {
                 Text(text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(
-                        fontSize = 19.sp,
-                        fontStyle = if (verse.isRefrain) FontStyle.Italic else FontStyle.Normal,
-                        fontWeight = if (verse.isRefrain) FontWeight.Bold else FontWeight.Normal,
-                    )) {
-                        verse.line?.replace("\\n", "\r\n")?.let { append(it) }
+                    withStyle(style = SpanStyle(fontSize = 19.sp)) {
+                        append(result.song.name + "\n")
                     }
-                }, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = 89.dp))
+                    withStyle(style = SpanStyle(fontSize = 13.sp)) {
+                        result.songBook.name?.let { append(it) }
+                    }
+                }, textAlign = TextAlign.Center)
             }
-        })
+            Divider()
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, content = {
+                items(result.verses) { verse ->
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(
+                            fontSize = 19.sp,
+                            fontStyle = if (verse.isRefrain) FontStyle.Italic else FontStyle.Normal,
+                            fontWeight = if (verse.isRefrain) FontWeight.Bold else FontWeight.Normal,
+                        )) {
+                            verse.line?.replace("\\n", "\r\n")?.let { append(it) }
+                        }
+                    },
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 89.dp))
+                }
+            })
+
+        }
+
+        if (result.song.audio==true){
+            Card(modifier = Modifier, elevation = 5.dp, ) {
+                PlayerView(modifier = Modifier)
+            }
+        }
     }
 
 }

@@ -8,8 +8,8 @@ import ru.godsonpeya.atmosphere.data.local.entity.SongWithVerses
 @Dao
 interface SongDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWithSuspend(obj: List<Song>): List<Long>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertWithSuspend(songs: List<Song>): List<Long>
 
     @Query("DELETE FROM song")
     suspend fun deleteAllWithSuspend()
@@ -21,7 +21,7 @@ interface SongDao {
     fun getById(id: Int): SongWithVerses
 
     @Query("UPDATE song SET isFavorite=:isFavorite WHERE id=:songId")
-    fun setFavorite(songId: Int, isFavorite: Boolean)
+    suspend fun setFavorite(songId: Int, isFavorite: Boolean)
 
     @Transaction
     @Query("SELECT * FROM song s  WHERE languageId =:langId AND s.code =:songCode LIMIT 1")
@@ -38,6 +38,10 @@ interface SongDao {
     @Transaction
     @Query("SELECT * FROM song ORDER BY number")
     fun getAllSong(): Flow<MutableList<SongWithVerses>>
+
+    @Transaction
+    @Query("SELECT * FROM song WHERE isFavorite=1 ORDER BY number")
+    fun getAllFavorites(): Flow<MutableList<SongWithVerses>>
 
     @Query("SELECT COUNT(id) FROM song WHERE songbookId =:songBookId")
     fun getCount(songBookId: Int): Int

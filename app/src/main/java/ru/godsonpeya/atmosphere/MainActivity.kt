@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.godsonpeya.atmosphere.navigation.AppNavigation
-import ru.godsonpeya.atmosphere.theme.JetNavSampleAppTheme
+import ru.godsonpeya.atmosphere.theme.AtmosphereTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            JetNavSampleAppTheme {
+            AtmosphereTheme {
                 AtmosphereApp()
             }
         }
@@ -41,7 +41,6 @@ fun AtmosphereApp() {
     Scaffold(topBar = viewModel.topBar.value,
         bottomBar = viewModel.bottomBar.value,
         scaffoldState = rememberScaffoldState(),
-        drawerContent = { viewModel.drawerContent.value }
     ) { inner ->
         Surface(modifier = Modifier
             .padding(inner)

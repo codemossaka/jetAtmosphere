@@ -30,7 +30,7 @@ private val LightColorPalette = lightColors(
     */)
 
 @Composable
-fun JetNavSampleAppTheme(
+fun AtmosphereTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {

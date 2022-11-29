@@ -1,6 +1,5 @@
-package ru.godsonpeya.atmosphere.screens.songbook
+package ru.godsonpeya.atmosphere.screens.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,19 +11,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import ru.godsonpeya.atmosphere.component.BottomMenu
 import ru.godsonpeya.atmosphere.component.Drawer
 import ru.godsonpeya.atmosphere.component.RowSongBookItem
 import ru.godsonpeya.atmosphere.data.local.entity.ApiStatus
 import ru.godsonpeya.atmosphere.navigation.NavigationItem
-import ru.godsonpeya.atmosphere.widgets.BottomNavItem
 import ru.godsonpeya.atmosphere.widgets.LoaderView
-import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp
 import ru.godsonpeya.atmosphere.widgets.ScaffoldLayoutApp.setScaffold
 import ru.godsonpeya.atmosphere.widgets.setOpenDialog
 
@@ -60,18 +54,7 @@ fun MainScreen(viewModel: MainViewModel, navController: NavHostController) {
             })
         },
         bottomBar = {
-            BottomAppBar {
-                Row(modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween) {
-                    BottomNavItem(imageVector = Icons.Default.Home) {
-
-                    }
-                    BottomNavItem(imageVector = Icons.Default.Home) {
-
-                    }
-                }
-            }
+            BottomMenu(navController=navController)
         },
         {
             Drawer(songBooks = viewModel.songBooks.collectAsState()) { title, route ->

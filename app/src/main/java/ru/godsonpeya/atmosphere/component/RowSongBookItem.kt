@@ -77,73 +77,72 @@ fun RowSongBookItem(
     val paddingIcons by remember {
         mutableStateOf(paddingSong / 5)
     }
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colors.primary)
-            .swipeable(state = swipeableState, anchors = anchors, thresholds = { from, to ->
-                FractionalThreshold(0.3f)
-            }, orientation = Orientation.Horizontal)) {
-            Box {
-                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .padding(paddingIcons.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = {
-
-                        },
-                    ) {
-                        Icon(
-                            Icons.Outlined.Refresh,
-                            contentDescription = "Refresh",
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Row() {
-
+    Column {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colors.primary)
+                .swipeable(state = swipeableState, anchors = anchors, thresholds = { from, to ->
+                    FractionalThreshold(0.3f)
+                }, orientation = Orientation.Horizontal)) {
+                Box {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(paddingIcons.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = {
-                                openDialog.value = true
+
                             },
                         ) {
-                            Icon(Icons.Outlined.DeleteOutline, contentDescription = "Delete")
+                            Icon(
+                                Icons.Outlined.Refresh,
+                                contentDescription = "Refresh",
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Row() {
+
+                            IconButton(
+                                onClick = {
+                                    openDialog.value = true
+                                },
+                            ) {
+                                Icon(Icons.Outlined.DeleteOutline, contentDescription = "Delete")
+                            }
                         }
                     }
                 }
-            }
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .offset {
-                    val offsetValue =  swipeableState.offset.value.roundToInt()
-                    if (offsetValue != 0) {
-                        if (offsetValue >= 198) {
-                            onUpdateSongBook.invoke()
-                        } else if (offsetValue <= -198) {
-                            openDialog.value = true
-                        }
-                    }
-                    IntOffset(offsetValue, 0)
-                }, elevation = 5.dp, shape = RoundedCornerShape(10.dp)) {
-                Row(modifier = Modifier
+                Card(modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        onSongBookClicked.invoke()
-                    }
-                    .padding(paddingSong.dp)
-                    .background(MaterialTheme.colors.background),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = buildAnnotatedString {
-                        withStyle(style = SpanStyle()) {
-                            append(data.songbook.name!!)
+                    .offset {
+                        val offsetValue = swipeableState.offset.value.roundToInt()
+                        if (offsetValue != 0) {
+                            if (offsetValue >= 198) {
+                                onUpdateSongBook.invoke()
+                            } else if (offsetValue <= -198) {
+                                openDialog.value = true
+                            }
                         }
-                    })
+                        IntOffset(offsetValue, 0)
+                    }, elevation = 5.dp, shape = RoundedCornerShape(10.dp)) {
+                    Row(modifier = Modifier
+                        .clickable {
+                            onSongBookClicked.invoke()
+                        }
+                        .padding(paddingSong.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = buildAnnotatedString {
+                            withStyle(style = SpanStyle()) {
+                                append(data.songbook.name!!)
+                            }
+                        })
+                    }
                 }
             }
-            Divider()
         }
+        Divider()
     }
 }

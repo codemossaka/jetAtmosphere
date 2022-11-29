@@ -14,7 +14,7 @@ import ru.godsonpeya.atmosphere.utils.UUIDConverter
 @Database(
     entities = [Language::class, SongBook::class, Song::class, Verse::class],
     views = [DownloadedSongBook::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(DateConverter::class, UUIDConverter::class)

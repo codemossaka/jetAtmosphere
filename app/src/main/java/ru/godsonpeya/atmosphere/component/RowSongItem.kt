@@ -31,18 +31,20 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import ru.godsonpeya.atmosphere.R
 import ru.godsonpeya.atmosphere.data.local.entity.SongWithVerses
+import ru.godsonpeya.atmosphere.utils.formatFavorite
 import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RowSongItem(data: SongWithVerses,onFavoriteClicked:()->Unit, onRowSongClicked: () -> Unit) {
+fun RowSongItem(data: SongWithVerses, onFavoriteClicked: () -> Unit, onRowSongClicked: () -> Unit) {
     val squareSize = 60.dp
-    val swipeableState = rememberSwipeableState(initialValue = 0)
+
+    val swipeableState = rememberSwipeableState(initialValue = 0) {
+        false
+    }
     val sizePx = with(LocalDensity.current) { squareSize.toPx() }
     val anchors = mapOf(0f to 0, -sizePx to 10)
-    val openDialog = remember { mutableStateOf(false) }
-    val text = remember { mutableStateOf("") }
 
     val paddingSong by remember {
         mutableStateOf(20)
@@ -50,72 +52,76 @@ fun RowSongItem(data: SongWithVerses,onFavoriteClicked:()->Unit, onRowSongClicke
     val paddingIcons by remember {
         mutableStateOf(paddingSong / 5)
     }
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colors.primary)
-            .swipeable(state = swipeableState, anchors = anchors, thresholds = { _, _ ->
-                FractionalThreshold(0.3f)
-            }, orientation = Orientation.Horizontal)) {
-            Box {
-                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .padding(paddingIcons.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = {
-                            onFavoriteClicked.invoke()
-                        },
-                    ) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.White)
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    IconButton(
-                        onClick = {
-                            openDialog.value = true
-                            text.value = data.song.name!!
-                        },
-                    ) {
-                        Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Delete")
-                    }
-                }
-            }
-            Card(modifier = Modifier
+    Column {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier
                 .fillMaxWidth()
-                .offset {
-                    IntOffset(swipeableState.offset.value.roundToInt(), 0)
-                }, elevation = 5.dp, shape = RoundedCornerShape(10.dp)) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onRowSongClicked.invoke()
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colors.primary)
+                .swipeable(state = swipeableState, anchors = anchors, thresholds = { _, _ ->
+                    FractionalThreshold(0.3f)
+                }, orientation = Orientation.Horizontal)) {
+                Box {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .padding(paddingIcons.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = {},
+                        ) {
+                            Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = Color.White)
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        IconButton(
+                            onClick = {},
+                        ) {
+                            Icon(if (data.song.isFavorite == true) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = "Favorite",
+                                tint = Color.Red)
+                        }
                     }
-                    .padding(paddingSong.dp)
-                    .background(MaterialTheme.colors.background),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = buildAnnotatedString {
-                        withStyle(style = SpanStyle()) {
-                            append(data.song.number + ". ")
+                }
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .offset {
+                        val offsetValue = swipeableState.offset.value.roundToInt()
+                        if (offsetValue != 0) {
+                            if (offsetValue <= -181) {
+                                onFavoriteClicked.invoke()
+                            }
                         }
-                        withStyle(style = SpanStyle()) {
-                            append(data.song.name!!)
+                        IntOffset(offsetValue, 0)
+                    }, elevation = 5.dp, shape = RoundedCornerShape(10.dp)) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onRowSongClicked.invoke()
                         }
-                    })
-                    if (data.song.audio!!) {
-                        Icon(painter = painterResource(id = R.drawable.ic_singer),
-                            contentDescription = "audio",
-                            modifier = Modifier
-                                .padding(top = 0.dp)
-                                .size(13.dp),
-                            tint = Color(0xFF4C41E2))
+                        .padding(paddingSong.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = buildAnnotatedString {
+                            withStyle(style = SpanStyle()) {
+                                append(data.song.number + ". ")
+                            }
+                            withStyle(style = SpanStyle()) {
+                                append(data.song.name!!)
+                            }
+                        })
+                        if (data.song.audio!!) {
+                            Icon(painter = painterResource(id = R.drawable.ic_singer),
+                                contentDescription = "audio",
+                                modifier = Modifier
+                                    .padding(top = 0.dp)
+                                    .size(13.dp),
+                                tint = Color(0xFF4C41E2))
+                        }
                     }
                 }
             }
-            Divider()
         }
+        Divider()
     }
 }

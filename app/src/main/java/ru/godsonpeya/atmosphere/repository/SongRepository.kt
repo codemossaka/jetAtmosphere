@@ -31,9 +31,9 @@ class SongRepository @Inject constructor(
         throw RuntimeException()
     }
 
-    fun getAllSongs(): Flow<MutableList<SongWithVerses>> {
+    fun getAllFavorites(): Flow<MutableList<SongWithVerses>> {
         try {
-            val allSongById = songDao.getAllSong()
+            val allSongById = songDao.getAllFavorites()
             return allSongById
         } catch (e: Exception) {
             e.printStackTrace()
@@ -45,7 +45,7 @@ class SongRepository @Inject constructor(
         return songDao.getById(songId)
     }
 
-    fun setFavorite(songId: Int,isFavorite:Boolean) {
+    suspend fun setFavorite(songId: Int,isFavorite:Boolean) {
         return songDao.setFavorite(songId, isFavorite)
     }
 
